@@ -1,41 +1,71 @@
 package react.native.image_crop_picker;
 
 import js.Promise;
-import haxe.io.Bytes;
 
 @:jsRequire('react-native-image-crop-picker', 'default')
 extern class ImagePicker {
-	public static function openPicker(input:PickerInput):Promise<Dynamic>;
-	public static function openCamera(input:CameraInput):Promise<Dynamic>;
+	public static function openPicker(input:Request):Promise<Response>;
+	public static function openCamera(input:Request):Promise<Response>;
+	public static function openCropper(input:CropperRequest):Promise<Response>;
 	public static function clean():Promise<Void>;
 }
 
-typedef PickerInput = {
+typedef CropperRequest = {
+	> Request,
+	path:String,
+}
+
+typedef Request = {
+	?cropping:Bool,
 	?width:Int,
 	?height:Int,
-	?cropping:Bool,
 	?multiple:Bool,
 	?includeBase64:Bool,
+	?includeExif:Bool,
+	?cropperToolbarTitle:String,
+	?cropperCircleOverlay:Bool,
+	?compressImageMaxWidth:Int,
+	?compressImageMaxHeight:Int,
+	?compressImageQuality:Float,
+	?mediaType:String,
 	#if ios
+	?writeTempFile:Bool,
+	?minFiles:Int,
 	?maxFiles:Int,
-	?compressVideo:Bool,
+	?waitAnimationEnd:Bool,
 	?smartAlbums:Array<AlbumTypes>,
+	?useFrontCamera:Bool,
+	?compressVideoPreset:String,
+	?loadingLabelText:String,
+	?showsSelectedCount:Bool,
+	#else
+	?cropperActiveWidgetColor:String,
+	?cropperStatusBarColor:String,
+	?cropperToolBarColor:String,
+	?freeStyleCropEnabled:String,
+	?disableCropperColorSetters:Bool,
+	?showCropGuidelines:Bool,
+	?hideBottomControls:Bool,
+	?enableRotationGeseture:Bool,
 	#end
 }
 
-typedef CameraInput = {
-	?width:Int,
-	?height:Int,
-	?cropping:Bool,
-}
-
-typedef ImagePickerResponse = {
+typedef Response = {
 	path:String,
+	#if ios
+	localIdentifier:String,
+	sourceURL:String,
+	filename:String,
+	#end
 	width:Int,
 	height:Int,
 	mime:String,
 	size:Int,
-	data:Bytes,
+	data:String,
+	exif:Dynamic,
+	cropRect:{width:Int, height:Int, x:Int, y:Int},
+	creationDate:String,
+	modificationDate:String,
 }
 
 @:enum
